@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   python: circleci/python@1.5.0
   aws-cli: circleci/aws-cli@2.0.6
+  cloudformation: davidkelley/cloudformation@1.2.3
 
 jobs:
           
@@ -15,7 +16,7 @@ jobs:
           name: create network
           # This assumes pytest is installed via the install-package step above
           command: |
-            aws cloudformation create-stack --stack-name capstone-vpc-${CIRCLE_WORKFLOW_ID:0:7} \
+            aws cloudformation deploy-and-wait --stack-name capstone-vpc-${CIRCLE_WORKFLOW_ID:0:7} \
               --region us-east-1 --template-body file://kubernetes-network.yml \
               --parameters file://kubernetes-network-params.json
 
@@ -30,7 +31,7 @@ jobs:
           name: create cluster
           # This assumes pytest is installed via the install-package step above
           command: |
-            aws cloudformation create-stack --stack-name eks-${CIRCLE_WORKFLOW_ID:0:7} \
+            aws cloudformation deploy-and-wait --stack-name eks-${CIRCLE_WORKFLOW_ID:0:7} \
               --region us-east-1 --template-body file://kubernetes-cluster.yml \
               --parameters file://kubernetes-cluster-params.json \
               --capabilities CAPABILITY_NAMED_IAM
@@ -55,6 +56,7 @@ jobs:
       - run:
           name: run docker
           command: | 
+            systemctl start docker
             ./run_docker.sh
 
 # upload dockerfile
