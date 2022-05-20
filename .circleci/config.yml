@@ -17,7 +17,7 @@ jobs:
           command: |
             aws cloudformation deploy --template-file kubernetes-network.yml \
               --stack-name capstone-vpc-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameters-file kubernetes-network-params.json
+              --parameter-file kubernetes-network-params.json
               --tags project=capstone \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
               
@@ -35,7 +35,7 @@ jobs:
           command: |
             aws cloudformation deploy --stack-name eks-${CIRCLE_WORKFLOW_ID:0:7} \
               --template-file kubernetes-cluster.yml \
-              --parameters-file kubernetes-cluster-params.json \
+              --parameter-file kubernetes-cluster-params.json \
               --tags project=capstone \
               --capabilities CAPABILITY_NAMED_IAM
 
@@ -52,15 +52,17 @@ jobs:
           
 # run docker    
   run-docker:
-    docker:
-      - image: cimg/node:17.3.0
+    machine: true
     steps:
       - checkout
-      - run:
-          name: run docker
-          command: | 
-            systemctl start docker
-            ./run_docker.sh
+       - run: |
+          echo "building..."
+          docker build --tag=helloworldapp .
+          echo docker image ls
+          docker image ls
+          echo "run now.."
+          docker run -p 5000:5000 helloworldapp
+
 
 # upload dockerfile
   upload-docker:
