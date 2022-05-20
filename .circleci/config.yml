@@ -5,20 +5,16 @@ orbs:
   aws-cli: circleci/aws-cli@2.0.6
 
 jobs:
-
-  aws-cli-cred-setup:
-    executor: aws-cli/default
-    steps:
-      - aws-cli/setup:
-          aws-access-key-id: AWS_ACCESS_KEY
-          aws-secret-access-key: AWS_ACCESS_SECRET
-          aws-region: AWS_REGION_NAME
           
   build-network:
     docker:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY
+          aws-secret-access-key: AWS_ACCESS_SECRET
+          aws-region: AWS_REGION_NAME
       - run:
           name: create network
           # This assumes pytest is installed via the install-package step above
@@ -31,7 +27,5 @@ workflows:
   sample: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - aws-cli-cred-setup:
-          context: aws
       - build-network:
-          requires: [aws-cli-cred-setup]
+
