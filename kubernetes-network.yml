@@ -29,6 +29,9 @@ Parameters:
       Description: ID of the Ami to use
       Type: String
       Default: ami-0022f774911c1d690
+  ID:
+      Description: Unique ID
+      Type: String
 
 Resources:
   VPC: 
@@ -225,28 +228,28 @@ Outputs:
     Description: The VPC Id
     Value: !Ref VPC
     Export:
-        Name: !Sub ${EnvironmentName}-VPCID
+        Name: !Sub ${EnvironmentName}-VPCID-${ID}
 
   PublicSubnet01:
     Description: A reference to the public subnet in the 1st Availability Zone
     Value: !Ref PublicSubnet1
     Export:
-      Name: !Sub ${EnvironmentName}-PUB01-SN
+      Name: !Sub ${EnvironmentName}-PUB01-SN-${ID}
 
   PublicSubnet02:
     Description: A reference to the public subnet in the 2nd Availability Zone
     Value: !Ref PublicSubnet2
     Export:
-      Name: !Sub ${EnvironmentName}-PUB02-SN
+      Name: !Sub ${EnvironmentName}-PUB02-SN-${ID}
  
   PrivateSubnet01:
     Description: A reference to the public subnet in the 1st Availability Zone
     Value: !Ref PrivateSubnet1
     Export:
-      Name: !Sub ${EnvironmentName}-PRI01-SN
+      Name: !Sub ${EnvironmentName}-PRI01-SN-${ID}
 
   PrivateSubnet02:
     Description: A reference to the public subnet in the 2nd Availability Zone
     Value: !Ref PrivateSubnet2
     Export:
-      Name: !Sub ${EnvironmentName}-PRI02-SN
+      Name: !Sub ${EnvironmentName}-PRI02-SN-${ID}
