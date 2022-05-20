@@ -17,9 +17,8 @@ jobs:
           command: |
             aws cloudformation deploy --template-file kubernetes-network.yml \
               --stack-name capstone-vpc-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-file kubernetes-network-params.json
+              --parameter-overrides file://kubernetes-network-params.json
               --tags project=capstone \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
               
 
 
@@ -35,7 +34,7 @@ jobs:
           command: |
             aws cloudformation deploy --stack-name eks-${CIRCLE_WORKFLOW_ID:0:7} \
               --template-file kubernetes-cluster.yml \
-              --parameter-file kubernetes-cluster-params.json \
+              --parameter-overrides file://kubernetes-cluster-params.json \
               --tags project=capstone \
               --capabilities CAPABILITY_NAMED_IAM
 
