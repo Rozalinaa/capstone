@@ -61,7 +61,7 @@ Resources:
     Type: "AWS::EKS::Cluster"
     Properties:
       Name: prod
-      Version: "1.15"
+      Version: "1.21"
       RoleArn: !GetAtt ClusterRole.Arn
       ResourcesVpcConfig:
         SecurityGroupIds:

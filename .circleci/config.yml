@@ -15,7 +15,69 @@ jobs:
           name: create network
           # This assumes pytest is installed via the install-package step above
           command: |
-            aws cloudformation create-stack --stack-name capstone-vpc --region us-east-1 --template-body file://kubernetes-network.yml --parameters file://kubernetes-network-params.json 
+            aws cloudformation create-stack --stack-name capstone-vpc \
+              --region us-east-1 --template-body file://kubernetes-network.yml \
+              --parameters file://kubernetes-network-params.json
+
+
+# build cluster for kubernetes            
+  build-cluster:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: create cluster
+          # This assumes pytest is installed via the install-package step above
+          command: |
+            aws cloudformation create-stack --stack-name eks \
+              --region us-east-1 --template-body file://kubernetes-cluster.yml \
+              --parameters file://kubernetes-cluster-params.json \
+              --capabilities CAPABILITY_NAMED_IAM
+
+# set context for cluster
+  set-context:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: create network
+          command: | 
+            aws eks --region us-east-1 update-kubeconfig --name prod 
+          
+# run docker    
+  run-docker:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - run:
+          name: run docker
+          command: | 
+            ./run_docker.sh
+
+# upload dockerfile
+  upload-docker:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - run:
+          name: run docker
+          command: | 
+            ./upload_docker.sh
+            
+# run kubernetes
+  run-kubernetes:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - run:
+          name: run docker
+          command: | 
+            ./run_kubernetes.sh  
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -24,4 +86,13 @@ workflows:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-network
+      - build-cluster:
+        requires: [build-network]
+      - set-context:
+        requires: [build-cluster]
+      - run-docker
+      - upload-docker:
+        requires: [run-docker]
+      - run-kubernetes:
+        requires: [upload-docker]
 
