@@ -17,7 +17,7 @@ jobs:
           command: |
             aws cloudformation deploy --template-file kubernetes-network.yml \
               --stack-name capstone-vpc-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides file://kubernetes-network-params.json
+              --parameter-overrides file://kubernetes-network-params.json \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=capstone \
               
