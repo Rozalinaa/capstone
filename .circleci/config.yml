@@ -15,9 +15,12 @@ jobs:
           name: create network
           # This assumes pytest is installed via the install-package step above
           command: |
-            aws cloudformation deploy-and-wait --stack-name capstone-vpc-${CIRCLE_WORKFLOW_ID:0:7} \
-              --region us-east-1 --template-body file://kubernetes-network.yml \
-              --parameters file://kubernetes-network-params.json
+            aws cloudformation deploy --template-file kubernetes-network.yml \
+              --stack-name capstone-vpc-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameters-file kubernetes-network-params.json
+              --tags project=capstone \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
+              
 
 
 # build cluster for kubernetes            
@@ -30,9 +33,10 @@ jobs:
           name: create cluster
           # This assumes pytest is installed via the install-package step above
           command: |
-            aws cloudformation deploy-and-wait --stack-name eks-${CIRCLE_WORKFLOW_ID:0:7} \
-              --region us-east-1 --template-body file://kubernetes-cluster.yml \
-              --parameters file://kubernetes-cluster-params.json \
+            aws cloudformation deploy --stack-name eks-${CIRCLE_WORKFLOW_ID:0:7} \
+              --template-file kubernetes-cluster.yml \
+              --parameters-file kubernetes-cluster-params.json \
+              --tags project=capstone \
               --capabilities CAPABILITY_NAMED_IAM
 
 # set context for cluster
