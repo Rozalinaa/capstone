@@ -55,7 +55,7 @@ jobs:
     machine: true
     steps:
       - checkout
-       - run: |
+      - run: |
           echo "building..."
           docker build --tag=helloworldapp .
           echo docker image ls
