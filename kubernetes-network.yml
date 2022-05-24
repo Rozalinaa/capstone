@@ -5,6 +5,7 @@ Parameters:
   EnvironmentName:
       Description: Name of the environemnt
       Type: String
+      Default: capstone
   VpcCIDR:
       Description: Please enter the IP range (DIRF notation) for the vpc
       Type: String
@@ -29,9 +30,6 @@ Parameters:
       Description: ID of the Ami to use
       Type: String
       Default: ami-0022f774911c1d690
-  ID:
-      Description: Unique ID
-      Type: String
 
 Resources:
   VPC: 
@@ -228,28 +226,28 @@ Outputs:
     Description: The VPC Id
     Value: !Ref VPC
     Export:
-        Name: !Sub ${EnvironmentName}-VPCID-${ID}
+        Name: !Sub ${EnvironmentName}-VPCID
 
   PublicSubnet01:
     Description: A reference to the public subnet in the 1st Availability Zone
     Value: !Ref PublicSubnet1
     Export:
-      Name: !Sub ${EnvironmentName}-PUB01-SN-${ID}
+      Name: !Sub ${EnvironmentName}-PUB01-SN
 
   PublicSubnet02:
     Description: A reference to the public subnet in the 2nd Availability Zone
     Value: !Ref PublicSubnet2
     Export:
-      Name: !Sub ${EnvironmentName}-PUB02-SN-${ID}
+      Name: !Sub ${EnvironmentName}-PUB02-SN
  
   PrivateSubnet01:
     Description: A reference to the public subnet in the 1st Availability Zone
     Value: !Ref PrivateSubnet1
     Export:
-      Name: !Sub ${EnvironmentName}-PRI01-SN-${ID}
+      Name: !Sub ${EnvironmentName}-PRI01-SN
 
   PrivateSubnet02:
     Description: A reference to the public subnet in the 2nd Availability Zone
     Value: !Ref PrivateSubnet2
     Export:
-      Name: !Sub ${EnvironmentName}-PRI02-SN-${ID}
+      Name: !Sub ${EnvironmentName}-PRI02-SN
