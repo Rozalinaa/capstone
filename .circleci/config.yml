@@ -71,6 +71,7 @@ jobs:
       - run:
           name: build image
           command: |
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 741506559500.dkr.ecr.us-east-1.amazonaws.com
             docker build -t capstone .
             docker tag capstone:latest 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
             docker push 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
