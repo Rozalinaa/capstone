@@ -17,7 +17,7 @@ jobs:
           command: |
             aws cloudformation deploy --template-file kubernetes-network.yml \
               --stack-name capstone-vpc \
-              --parameter-overrides {'file://kubernetes-network-params.json'} \
+              --parameter-overrides file://kubernetes-network-params.json \
               --tags project=capstone \
               
 
@@ -65,8 +65,7 @@ jobs:
 
 #build docker image  
   build-docker:
-    docker: 
-      - image: cimg/node:17.3.0
+    machine: true
     steps:
       - checkout
       - run:
@@ -77,8 +76,7 @@ jobs:
   
 # upload dockerfile
   upload-docker:
-    docker:
-      - image: cimg/node:17.3.0
+    machine: true
     steps:
       - checkout
       - run:
