@@ -75,10 +75,6 @@ jobs:
             docker build -t capstone .
             docker tag capstone:latest 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
             docker push 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
-            minikube start
-            kubectl apply -f deployment.yaml
-            kubectl get deployments
-            kubectl get services
 
 
 # run kubernetes
@@ -86,6 +82,12 @@ jobs:
     machine: true
     steps:
       - checkout
+      - run:
+          name: install kubectl
+          command: |
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+            kubectl version --client
       - run:
           name: run docker
           command: | 
@@ -107,6 +109,6 @@ workflows:
   change-version:
     jobs:
       - build-docker
-      #- upload-docker:
-       #   requires: [build-docker]
+      - run-kubernetes:
+          requires: [build-docker]
 
