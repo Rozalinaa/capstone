@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capstone-deployment
+  labels:
+    app: helloworldapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: helloworldapp
+  template:
+    metadata:
+      labels:
+        app: helloworldapp
+    spec:
+      containers:
+      - name: python-app
+        image: 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
+        ports:
+        - containerPort: 80

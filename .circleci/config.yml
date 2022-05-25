@@ -69,32 +69,29 @@ jobs:
     steps:
       - checkout
       - run:
-          name: build image
+          name: build image and push to ecr
           command: |
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 741506559500.dkr.ecr.us-east-1.amazonaws.com
             docker build -t capstone .
             docker tag capstone:latest 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
             docker push 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
-  
-# upload dockerfile
-  upload-docker:
-    machine: true
-    steps:
-      - checkout
-      - run:
-          name: push docker to ecr
-          command: | 
-            docker push 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
+            kubectl apply -f deployment.yaml
+            kubectl get deployments
+            kubectl get services
+
+
 # run kubernetes
   run-kubernetes:
-    docker:
-      - image: cimg/node:17.3.0
+    machine: true
     steps:
       - checkout
       - run:
           name: run docker
           command: | 
-            ./run_kubernetes.sh  
+            kubectl apply -f deployment.yaml
+            kubectl get deployments
+            kubectl get services
+ 
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
