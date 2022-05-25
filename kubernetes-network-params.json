@@ -22,14 +22,6 @@
 	{
 		"ParameterKey": "PublicSubnet2CIDR",
 		"ParameterValue": "10.0.1.0/24"
-	},
-	{
-		"ParameterKey": "LinuxAMI",
-		"ParameterValue": "ami-0022f774911c1d690"		
-	}
-	{
-		"ParameterKey": "ID",
-		"ParameterValue": "123456789"		
 	}
 	
 ]

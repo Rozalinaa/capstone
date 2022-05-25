@@ -16,9 +16,8 @@ jobs:
           # This assumes pytest is installed via the install-package step above
           command: |
             aws cloudformation deploy --template-file kubernetes-network.yml \
-              --stack-name capstone-vpc-${CIRCLE_WORKFLOW_ID:0:7} \
+              --stack-name capstone-vpc \
               --parameter-overrides {'file://kubernetes-network-params.json'} \
-              --parameter-overrides EnvironmentName=${CIRCLE_WORKFLOW_ID:0:7} \
               --tags project=capstone \
               
 
@@ -32,11 +31,11 @@ jobs:
       - run:
           name: create cluster
           # This assumes pytest is installed via the install-package step above
+          no_output_timeout: 20m
           command: |
-            aws cloudformation deploy --stack-name eks-${CIRCLE_WORKFLOW_ID:0:7} \
+            aws cloudformation deploy --stack-name eks-capstone \
               --template-file kubernetes-cluster.yml \
               --parameter-overrides file://kubernetes-cluster-params.json \
-              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7}  \
               --tags project=capstone \
               --capabilities CAPABILITY_NAMED_IAM
 
@@ -64,7 +63,18 @@ jobs:
           echo "run now.."
           docker run -p 5000:5000 helloworldapp
 
-
+#build docker image  
+  build-docker:
+    docker: cimg/node:17.3.0
+      - image:
+    steps:
+      - checkout
+      - run:
+          name: build image
+          command: |
+            docker build -t capstone .
+            docker tag capstone:${CIRCLE_WORKFLOW_ID:0:7} 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:${CIRCLE_WORKFLOW_ID:0:7}
+  
 # upload dockerfile
   upload-docker:
     docker:
@@ -72,9 +82,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: run docker
+          name: push docker to ecr
           command: | 
-            ./upload_docker.sh
+            docker push 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:${CIRCLE_WORKFLOW_ID:0:7}
             
 # run kubernetes
   run-kubernetes:
@@ -90,7 +100,7 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+  build-infra: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build-network
@@ -103,4 +113,8 @@ workflows:
         #  requires: [run-docker]
       #- run-kubernetes:
        #   requires: [upload-docker]
+  change-version:
+    jobs:
+      - build-docker
+      - upload-docker
 

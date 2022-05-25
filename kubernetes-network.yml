@@ -26,10 +26,6 @@ Parameters:
       Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
       Type: String
       Default: 10.0.1.0/24
-  LinuxAMI:
-      Description: ID of the Ami to use
-      Type: String
-      Default: ami-0022f774911c1d690
 
 Resources:
   VPC: 
