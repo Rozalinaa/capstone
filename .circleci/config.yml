@@ -75,6 +75,7 @@ jobs:
             docker build -t capstone .
             docker tag capstone:latest 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
             docker push 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
+            minikube start
             kubectl apply -f deployment.yaml
             kubectl get deployments
             kubectl get services
