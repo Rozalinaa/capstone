@@ -108,5 +108,5 @@ workflows:
     jobs:
       - build-docker
       - upload-docker:
-        requires: [build-docker]
+          requires: [build-docker]
 
