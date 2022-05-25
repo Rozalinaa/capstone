@@ -110,6 +110,8 @@ jobs:
             minikube status
             echo 'logging in'
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 741506559500.dkr.ecr.us-east-1.amazonaws.com
+            echo 'create namespace'
+            kubectl create namespace eks-sample-app
             echo 'start deployment'
             ls -lh
             kubectl apply -f deployment.yml
