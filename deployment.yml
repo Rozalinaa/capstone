@@ -1,21 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: capstone-deployment
+  name: eks-sample-linux-deployment
+  namespace: eks-sample-app
   labels:
-    app: helloworldapp
+    app: eks-sample-python-app
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: helloworldapp
+      app: eks-sample-python-app
   template:
     metadata:
       labels:
-        app: helloworldapp
+        app: eks-sample-python-app
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
       containers:
-      - name: python-app
+      - name: nginx
         image: 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
         ports:
-        - containerPort: 80
+        - name: http
+          containerPort: 80
+        imagePullPolicy: IfNotPresent
+      nodeSelector:
+        kubernetes.io/os: linux
