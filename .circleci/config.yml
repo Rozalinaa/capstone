@@ -73,6 +73,7 @@ jobs:
           command: |
             docker build -t capstone .
             docker tag capstone:latest 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
+            docker push 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
   
 # upload dockerfile
   upload-docker:
@@ -107,6 +108,6 @@ workflows:
   change-version:
     jobs:
       - build-docker
-      - upload-docker:
-          requires: [build-docker]
+      #- upload-docker:
+       #   requires: [build-docker]
 
