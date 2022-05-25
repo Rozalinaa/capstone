@@ -46,7 +46,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: create network
+          name: set context
           command: | 
             aws eks --region us-east-1 update-kubeconfig --name prod 
           
@@ -94,12 +94,19 @@ jobs:
             curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
             && chmod +x minikube
       - run:
+          name: install eksctl
+          command: |
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            sudo mv /tmp/eksctl /usr/local/bin
+      - run:
           name: run docker
           command: | 
+            echo 'set context'
+            aws eks --region us-east-1 update-kubeconfig --name prod 
+            echo 'start minikube'
+            minikube start
             echo 'minikube status'
             minikube status
-            echo "create namespace"
-            kubectl create namespace eks-sample-app
             echo 'logging in'
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 741506559500.dkr.ecr.us-east-1.amazonaws.com
             echo 'start deployment'
