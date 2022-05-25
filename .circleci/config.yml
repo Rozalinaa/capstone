@@ -91,6 +91,10 @@ jobs:
       - run:
           name: run docker
           command: | 
+            echo 'minikube status
+            minikube status
+            echo "get info"
+            gcloud container clusters get-credentials "eks-capstone"
             echo "create namespace"
             kubectl create namespace eks-sample-app
             echo 'logging in'
