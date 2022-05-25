@@ -117,8 +117,12 @@ jobs:
             kubectl apply -f deployment.yml
             echo 'get deployments...'
             kubectl get deployments
+            echo 'deploy service'
+            kubectl apply -f service.yml
             echo 'get services...'
             kubectl get services
+            echo 'get pods'
+            kubectl get pods
  
 
 # Invoke jobs via workflows

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: eks-sample-linux-deployment
+  name: eks-python-deployment
   namespace: default
   labels:
     app: eks-sample-python-app

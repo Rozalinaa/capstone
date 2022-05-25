@@ -92,8 +92,8 @@ Resources:
       Labels:
         Name: Capstone
       Subnets:
-      - Fn::ImportValue: !Sub "${VPCStack}-PRI01-SN"
-      - Fn::ImportValue: !Sub "${VPCStack}-PRI02-SN"
+      - Fn::ImportValue: !Sub "${VPCStack}-PUB01-SN"
+      - Fn::ImportValue: !Sub "${VPCStack}-PUB02-SN"
 
       Tags:
         kubernetes.io/cluster/prod: 'owned' 

@@ -5,7 +5,7 @@
 
 # Step 1:
 # Create dockerpath
-DOCKERPATH=rozalina/helloworldproj
+DOCKERPATH=rozalina/capstoneproject
 
 # Step 2:  
 # Authenticate & tag
