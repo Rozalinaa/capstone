@@ -91,7 +91,7 @@ jobs:
       - run:
           name: run docker
           command: | 
-            echo 'minikube status
+            echo 'minikube status'
             minikube status
             echo "get info"
             gcloud container clusters get-credentials "eks-capstone"
