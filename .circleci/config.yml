@@ -65,8 +65,8 @@ jobs:
 
 #build docker image  
   build-docker:
-    docker: cimg/node:17.3.0
-      - image:
+    docker: 
+      - image: cimg/node:17.3.0
     steps:
       - checkout
       - run:
