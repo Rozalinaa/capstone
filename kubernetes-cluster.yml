@@ -83,7 +83,7 @@ Resources:
     Properties:
       ClusterName: !Ref ControlPlane 
       InstanceTypes:
-      - t3.medium
+      - t2.micro
       NodeRole: !GetAtt NodeInstanceRole.Arn
       ScalingConfig:
         MinSize: 1
