@@ -121,6 +121,8 @@ jobs:
             kubectl apply -f service.yml
             echo 'get services...'
             kubectl get services
+            echo 'get nodes'
+            kubectl get nodes
             echo 'get pods'
             kubectl get pods
  
