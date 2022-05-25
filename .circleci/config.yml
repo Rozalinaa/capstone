@@ -89,12 +89,15 @@ jobs:
             sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
             kubectl version --client
       - run:
+          name: install minikube
+          command: |
+            curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
+            && chmod +x minikube
+      - run:
           name: run docker
           command: | 
             echo 'minikube status'
             minikube status
-            echo "get info"
-            gcloud container clusters get-credentials "eks-capstone"
             echo "create namespace"
             kubectl create namespace eks-sample-app
             echo 'logging in'
