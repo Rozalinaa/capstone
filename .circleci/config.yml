@@ -109,7 +109,7 @@ jobs:
           name: run kube
           command: | 
             echo 'set context'
-            aws eks --region us-east-1 update-kubeconfig --name prod 
+            aws eks --region us-east-1 update-kubeconfig --name testcluster 
             echo 'start minikube'
             minikube start
             echo 'minikube status'
@@ -136,13 +136,13 @@ jobs:
 # Invoke jobs via workflows#
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build-infra:
-    jobs:
-      - build-network
-      - build-cluster:
-          requires: [build-network]
-      - set-context:
-          requires: [build-cluster]
+#  build-infra:
+#    jobs:
+#      - build-network
+#      - build-cluster:
+#          requires: [build-network]
+#      - set-context:
+#          requires: [build-cluster]
   change-version:
     jobs:
       - build-docker
