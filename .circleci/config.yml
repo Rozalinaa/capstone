@@ -121,10 +121,12 @@ jobs:
             echo 'start deployment'
             ls -lh
             kubectl apply -f deployment.yml
+            sleep 20
             echo 'get deployments...'
             kubectl get deployments
             echo 'deploy service'
             kubectl apply -f service.yml
+            sleep 20
             echo 'get services...'
             kubectl get services
             echo 'get nodes'
