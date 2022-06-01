@@ -108,12 +108,18 @@ jobs:
       - run:
           name: run kube
           command: | 
+            echo 'current context start'
+            kubectl config current-context 
             echo 'set context'
             aws eks --region us-east-1 update-kubeconfig --name testcluster 
+            echo 'current context after setting'
+            kubectl config current-context 
             echo 'start minikube'
             minikube start
             echo 'minikube status'
             minikube status
+            echo 'current context after minukube'
+            kubectl config current-context 
             echo 'logging in'
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 741506559500.dkr.ecr.us-east-1.amazonaws.com
             echo 'create namespace'
