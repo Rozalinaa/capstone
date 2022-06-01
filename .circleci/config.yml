@@ -108,8 +108,6 @@ jobs:
       - run:
           name: run kube
           command: | 
-            echo 'current context start'
-            kubectl config current-context 
             echo 'set context'
             aws eks --region us-east-1 update-kubeconfig --name testcluster 
             echo 'current context after setting'
