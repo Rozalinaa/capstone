@@ -56,12 +56,18 @@ jobs:
     steps:
       - checkout
       - run: |
-          echo "building..."
-          docker build --tag=helloworldapp .
-          echo docker image ls
-          docker image ls
-          echo "run now.."
-          docker run -p 5000:5000 helloworldapp
+          cd nginx
+          docker build --tag=simpleubuntu . 
+          docker run --detach --publish=5001:80\
+          --name=simpleubuntu simpleubuntu
+
+
+#echo "building..."
+#docker build --tag=helloworldapp .
+#echo docker image ls
+#docker image ls
+#echo "run now.."
+#docker run -p 5000:5000 helloworldapp
 
 #build docker image  
   build-docker:
@@ -127,7 +133,7 @@ jobs:
             kubectl get pods
  
 
-# Invoke jobs via workflows
+# Invoke jobs via workflows#
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   build-infra:
@@ -137,9 +143,8 @@ workflows:
           requires: [build-network]
       - set-context:
           requires: [build-cluster]
-#  change-version:
-#    jobs:
-#      - build-docker
-#      - run-kubernetes:
-#          requires: [build-docker]
-
+  change-version:
+    jobs:
+      - build-docker
+      - run-kubernetes:
+          requires: [build-docker]
