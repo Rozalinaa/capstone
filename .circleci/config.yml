@@ -118,6 +118,8 @@ jobs:
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 741506559500.dkr.ecr.us-east-1.amazonaws.com
             echo 'create namespace'
             kubectl create namespace eks-sample-app
+            echo 'get namespaces'
+            kubectl get namespaces
             echo 'start deployment'
             ls -lh
             kubectl apply -f deployment.yml
@@ -126,15 +128,14 @@ jobs:
             kubectl get deployments
             echo 'deploy service'
             kubectl apply -f service.yml
-            sleep 20
+            sleep 30
             echo 'get services...'
             kubectl get services
             echo 'get nodes'
             kubectl get nodes
             echo 'get pods'
             kubectl get pods
-            echo 'curl'
-            curl backend-service
+
  
 
 # Invoke jobs via workflows#
