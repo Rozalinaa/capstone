@@ -120,6 +120,8 @@ jobs:
             kubectl create namespace eks-sample-app
             echo 'get namespaces'
             kubectl get namespaces
+            echo 'current context'
+            kubectl config current-context 
             echo 'start deployment'
             ls -lh
             kubectl apply -f deployment.yml
