@@ -7,7 +7,7 @@ app = Flask(__name__)
 log = create_logger(app)
 
 @app.route('/status')
-def healthcheck()
+def healthcheck():
     response = app.response_class(
             response=json.dumps({"result":"OK - healthy"}),
             status=200,
