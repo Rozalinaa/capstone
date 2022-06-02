@@ -8,7 +8,8 @@ This project is part of the final Udacity "Capstone" project which is part of th
 The goal is to use docker, kubernetes and a circle ci pipeline to demonstrate what has been learned in the course.
 
 # Environment
-It is recommended to run this in a venv and install the requirements by running "make install" Please note that it is advised to have the following setup in your environment:
+It is recommended to run this in a venv and install the requirements by running "make install" 
+Please note that it is advised to have the following setup in your environment:
 - hadolint
 - minikube
 - docker
