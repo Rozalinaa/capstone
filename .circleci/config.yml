@@ -2,8 +2,8 @@ version: 2.1
 
 
 orbs:
-  aws-eks: circleci/aws-eks@1.1.0
-  kubernetes: circleci/kubernetes@0.12.0
+  aws-eks: circleci/aws-eks@2.2.0
+  kubernetes: circleci/kubernetes@1.3.0
 
 executors:
   python:
@@ -28,65 +28,6 @@ jobs:
             sudo wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 && sudo chmod +x /bin/hadolint
             make install
             make lint
-
- 
- #   
-#  build-network:
-#    docker:
-#      - image: amazon/aws-cli
-#    steps:
-#      - checkout
-#      - run:
-#          name: create network
-#          # This assumes pytest is installed via the install-package step above
-#          command: |
-#            aws cloudformation deploy --template-file kubernetes-network.yml \
-#              --stack-name capstone-vpc \
-#              --parameter-overrides file://kubernetes-network-params.json \
-#              --tags project=capstone \
-              
-
-
-# build cluster for kubernetes            
-#  build-cluster:
-#    docker:
-#      - image: amazon/aws-cli
-#    steps:
-#      - checkout
-#      - run:
-#          name: create cluster
-#          # This assumes pytest is installed via the install-package step above
-#          no_output_timeout: 20m
-#          command: |
-#            aws cloudformation deploy --stack-name eks-capstone \
-#              --template-file kubernetes-cluster.yml \
-#              --parameter-overrides file://kubernetes-cluster-params.json \
-#              --tags project=capstone \
-#              --capabilities CAPABILITY_NAMED_IAM
-
-# set context for cluster
- # set-context:
-#    docker:
-#      - image: amazon/aws-cli
-#    steps:
-#      - checkout
-#      - run:
-#          name: set context
-#          command: | 
-#            aws eks --region us-east-1 update-kubeconfig --name prod 
-          
-# run docker    
-#  run-docker:
-#    machine: true
-#    steps:
-#      - checkout
-#      - run: |
-#          echo "building..."
-#          docker build --tag=helloworldapp .
-#          echo docker image ls
-#          docker image ls
-#          echo "run now.."
-#          docker run -p 5000:5000 helloworldapp
 
 
 #build docker image  
@@ -223,7 +164,7 @@ workflows:
           cluster-name: capstone
           requires:
           - aws-eks/update-container-image
-#      - aws-eks/delete-cluster:
-#          cluster-name: capstone
-#          requires:
-#            - test-cluster
+      - aws-eks/delete-cluster:
+          cluster-name: capstone
+          requires:
+            - test-cluster
