@@ -198,31 +198,31 @@ workflows:
   deployment:
     jobs:
       - lint
-#      - build-docker:
-#          requires:
-#            - lint
-#      - create-cluster:
-#          cluster-name: capstone
-#      - create-deployment:
-#          cluster-name: capstone
-#          requires:
-#            - create-cluster
-#      - aws-eks/update-container-image:
-#          cluster-name: capstone
-#          requires:
-#            - create-deployment
-#          container-image-updates: capstone=741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
-#          post-steps:
-#              - kubernetes/delete-resource:
-#                  resource-types: deployment
-#                  resource-names: capstone
-#                  wait: true
-#          record: true
-#          resource-name: deployment/capstone
-#      - cluster-test:
-#          cluster-name: capstone
-#          requires:
-#            - aws-eks/update-container-image
+      - build-docker:
+          requires:
+            - lint
+      - create-cluster:
+          cluster-name: capstone
+      - create-deployment:
+          cluster-name: capstone
+          requires:
+            - create-cluster
+      - aws-eks/update-container-image:
+          cluster-name: capstone
+          requires:
+            - create-deployment
+          container-image-updates: capstone=741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
+          post-steps:
+              - kubernetes/delete-resource:
+                  resource-types: deployment
+                resource-names: capstone
+                  wait: true
+          record: true
+          resource-name: deployment/capstone
+      - cluster-test:
+          cluster-name: capstone
+          requires:
+          - aws-eks/update-container-image
 #      - aws-eks/delete-cluster:
 #          cluster-name: capstone
 #          requires:
