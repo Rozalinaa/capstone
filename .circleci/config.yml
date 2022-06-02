@@ -45,7 +45,7 @@ jobs:
 
 #
   create-cluster:
-    executor: aws-eks/python3
+    executor: python
     parameters:
       cluster-name:
         description: |
@@ -81,7 +81,7 @@ jobs:
           skip-kubectl-install: false
           
   create-deployment:
-    executor: aws-eks/python3
+    executor: python
     parameters:
       cluster-name:
         description: |
@@ -99,7 +99,7 @@ jobs:
           resource-name: deployment/capstone   
 
   cluster-test:
-    executor: aws-eks/python3
+    executor: python
     parameters:
       cluster-name:
         description: |
