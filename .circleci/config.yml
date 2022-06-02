@@ -258,16 +258,16 @@ workflows:
 #          requires: [build-docker]
   deployment:
     jobs:
-      - lint
-      - build-docker:
-          requires:
-            - lint
-      - create-cluster:
-          cluster-name: capstone
+#      - lint
+#      - build-docker:
+#          requires:
+#            - lint
+#      - create-cluster:
+#          cluster-name: capstone
       - create-deployment:
           cluster-name: capstone
-          requires:
-            - create-cluster
+          #requires:
+           # - create-cluster
       - aws-eks/update-container-image:
           cluster-name: capstone
           requires:
