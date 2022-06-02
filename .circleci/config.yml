@@ -197,7 +197,7 @@ workflows:
 #          requires: [build-docker]
   deployment:
     jobs:
-#      - lint
+      - lint
 #      - build-docker:
 #          requires:
 #            - lint
@@ -205,8 +205,8 @@ workflows:
 #          cluster-name: capstone
 #      - create-deployment:
 #          cluster-name: capstone
-          #requires:
-           # - create-cluster
+#          requires:
+#            - create-cluster
 #      - aws-eks/update-container-image:
 #          cluster-name: capstone
 #          requires:
@@ -223,7 +223,7 @@ workflows:
 #          cluster-name: capstone
 #          requires:
 #            - aws-eks/update-container-image
-      - aws-eks/delete-cluster:
-          cluster-name: capstone
-          #requires:
-           # - test-cluster
+#      - aws-eks/delete-cluster:
+#          cluster-name: capstone
+#          requires:
+#            - test-cluster
