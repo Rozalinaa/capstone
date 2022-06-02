@@ -215,7 +215,7 @@ workflows:
           post-steps:
               - kubernetes/delete-resource:
                   resource-types: deployment
-                resource-names: capstone
+                  resource-names: capstone
                   wait: true
           record: true
           resource-name: deployment/capstone
