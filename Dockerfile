@@ -1,9 +1,4 @@
 FROM python:3.8
-LABEL maintainer="Udacity"
-
-
-
-
 
 ## Step 1:
 # Create a working directory
@@ -22,7 +17,6 @@ RUN pip install --upgrade pip &&\
 ## Step 4:
 # Expose port 80
 EXPOSE 80
-EXPOSE 5000/tcp
 
 ## Step 5:
 # Run app.py at container launch

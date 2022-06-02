@@ -21,4 +21,5 @@ echo "Forwarding..."
 
 # Step 4:
 # Forward the container port to a host
-kubectl port-forward "$DEVOPS_POD" --address 0.0.0.0 5000:5000 
+# kubectl expose deployment capstoneproject --type=LoadBalancer --port=8080 --target-port=80
+kubectl port-forward "$DEVOPS_POD" --address 0.0.0.0 8080:80 

@@ -148,8 +148,8 @@ workflows:
 #          requires: [build-network]
 #      - set-context:
 #          requires: [build-cluster]
-  change-version:
-    jobs:
-      - build-docker
-      - run-kubernetes:
-          requires: [build-docker]
+#  change-version:
+#    jobs:
+#      - build-docker
+#      - run-kubernetes:
+#          requires: [build-docker]
