@@ -15,9 +15,6 @@ executors:
 
 jobs:
 
-
-            #sudo apt-get update
-            #sudo apt-get install python3-venv          
   lint:
     executor: python
     steps:
@@ -105,7 +102,6 @@ jobs:
             docker tag capstone:latest 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
             docker push 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
 
-
 #
   create-cluster:
     executor: aws-eks/python3
@@ -186,63 +182,6 @@ jobs:
             echo "describe pods"
             kubectl describe pods
 
-# run kubernetes
-  run-kubernetes:
-    machine: true
-    steps:
-      - checkout
-      - run:
-          name: install kubectl
-          command: |
-            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-            sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-            kubectl version --client
-      - run:
-          name: install minikube
-          command: |
-            curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
-            && chmod +x minikube
-            sudo cp minikube /usr/local/bin && rm minikube
-      - run:
-          name: install eksctl
-          command: |
-            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-            sudo mv /tmp/eksctl /usr/local/bin
-      - run:
-          name: run kube
-          command: | 
-            echo 'set context'
-            aws eks --region us-east-1 update-kubeconfig --name testcluster 
-            echo 'current context after setting'
-            kubectl config current-context 
-            echo 'logging in'
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 741506559500.dkr.ecr.us-east-1.amazonaws.com
-            echo 'create namespace'
-            kubectl create namespace eks-sample-app
-            echo 'get namespaces'
-            kubectl get namespaces
-            echo 'current context'
-            kubectl config current-context 
-            echo 'start deployment'
-            ls -lh
-            kubectl apply -f deployment.yml
-            sleep 20
-            echo 'get deployments...'
-            kubectl get deployments
-            echo 'deploy service'
-            kubectl apply -f service.yml
-            sleep 30
-            echo 'get services...'
-            kubectl get services
-            echo 'get nodes'
-            kubectl get nodes
-            echo 'get pods'
-            kubectl get pods
-
- 
-
-# Invoke jobs via workflows#
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
 #  build-infra:
 #    jobs:
@@ -264,23 +203,27 @@ workflows:
 #            - lint
 #      - create-cluster:
 #          cluster-name: capstone
-      - create-deployment:
-          cluster-name: capstone
+#      - create-deployment:
+#          cluster-name: capstone
           #requires:
            # - create-cluster
-      - aws-eks/update-container-image:
+#      - aws-eks/update-container-image:
+#          cluster-name: capstone
+#          requires:
+#            - create-deployment
+#          container-image-updates: capstone=741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
+#          post-steps:
+#              - kubernetes/delete-resource:
+#                  resource-types: deployment
+#                  resource-names: capstone
+#                  wait: true
+#          record: true
+#          resource-name: deployment/capstone
+#      - cluster-test:
+#          cluster-name: capstone
+#          requires:
+#            - aws-eks/update-container-image
+      - aws-eks/delete-cluster:
           cluster-name: capstone
           requires:
-            - create-deployment
-          container-image-updates: capstone=741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
-          post-steps:
-              - kubernetes/delete-resource:
-                  resource-types: deployment
-                  resource-names: capstone
-                  wait: true
-          record: true
-          resource-name: deployment/capstone
-      - cluster-test:
-          cluster-name: capstone
-          requires:
-            - aws-eks/update-container-image
+           # - test-cluster
