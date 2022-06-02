@@ -137,6 +137,7 @@ jobs:
       - aws-eks/create-cluster:
           cluster-name: << parameters.cluster-name >>
           node-type: t2.small
+          nodes-max: 2
           ssh-access: false
           ssh-public-key: ''
           skip-kubectl-install: false
@@ -279,6 +280,6 @@ workflows:
           record: true
           resource-name: deployment/capstone
       - cluster-test:
-          cluster-name: apstone
+          cluster-name: capstone
           requires:
             - aws-eks/update-container-image
