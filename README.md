@@ -24,7 +24,7 @@ minikube start
 
 Filestructure
 The project contains the following:
-app.py - hello world python application
+app.py - hello world python application, this was an example in a previous lesson of the course
 Makefile - Makefile with instructions for using "make" from command line
 requirements.txt - contains all python dependencies that need to be installed. Should be used by running the Makefile
 run_docker.sh , run_kubernetes.sh, upload_docker.sh - see "Running project locally"

@@ -2,7 +2,7 @@ version: 2.1
 
 
 orbs:
-  aws-eks: circleci/aws-eks@2.2.0
+  aws-eks: circleci/aws-eks@2.0.0
   kubernetes: circleci/kubernetes@1.3.0
 
 executors:
@@ -124,18 +124,6 @@ jobs:
             kubectl describe pods
 
 workflows:
-#  build-infra:
-#    jobs:
-#      - build-network
-#      - build-cluster:
-#          requires: [build-network]
-#      - set-context:
-#          requires: [build-cluster]
-#  change-version:
-#    jobs:
-#      - build-docker
-#      - run-kubernetes:
-#          requires: [build-docker]
   deployment:
     jobs:
       - lint
