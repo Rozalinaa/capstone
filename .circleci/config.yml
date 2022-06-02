@@ -1,73 +1,95 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@1.5.0
-  aws-cli: circleci/aws-cli@2.0.6
 
-jobs:
-          
-  build-network:
+orbs:
+  aws-eks: circleci/aws-eks@1.1.0
+  kubernetes: circleci/kubernetes@0.12.0
+
+executors:
+  python:
+    docker:
+      - image: circleci/python:3.7.3-stretch
+  aws:
     docker:
       - image: amazon/aws-cli
+
+jobs:
+
+
+            #sudo apt-get update
+            #sudo apt-get install python3-venv          
+  lint:
+    executor: python
     steps:
       - checkout
       - run:
-          name: create network
-          # This assumes pytest is installed via the install-package step above
-          command: |
-            aws cloudformation deploy --template-file kubernetes-network.yml \
-              --stack-name capstone-vpc \
-              --parameter-overrides file://kubernetes-network-params.json \
-              --tags project=capstone \
+          name: Install hadolint in venv and lint app
+          command: | 
+            python3 -m venv ~/.capstone
+            source ~/.capstone/bin/activate
+            sudo wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 && sudo chmod +x /bin/hadolint
+            make install
+            make lint
+
+ 
+ #   
+#  build-network:
+#    docker:
+#      - image: amazon/aws-cli
+#    steps:
+#      - checkout
+#      - run:
+#          name: create network
+#          # This assumes pytest is installed via the install-package step above
+#          command: |
+#            aws cloudformation deploy --template-file kubernetes-network.yml \
+#              --stack-name capstone-vpc \
+#              --parameter-overrides file://kubernetes-network-params.json \
+#              --tags project=capstone \
               
 
 
 # build cluster for kubernetes            
-  build-cluster:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: create cluster
-          # This assumes pytest is installed via the install-package step above
-          no_output_timeout: 20m
-          command: |
-            aws cloudformation deploy --stack-name eks-capstone \
-              --template-file kubernetes-cluster.yml \
-              --parameter-overrides file://kubernetes-cluster-params.json \
-              --tags project=capstone \
-              --capabilities CAPABILITY_NAMED_IAM
+#  build-cluster:
+#    docker:
+#      - image: amazon/aws-cli
+#    steps:
+#      - checkout
+#      - run:
+#          name: create cluster
+#          # This assumes pytest is installed via the install-package step above
+#          no_output_timeout: 20m
+#          command: |
+#            aws cloudformation deploy --stack-name eks-capstone \
+#              --template-file kubernetes-cluster.yml \
+#              --parameter-overrides file://kubernetes-cluster-params.json \
+#              --tags project=capstone \
+#              --capabilities CAPABILITY_NAMED_IAM
 
 # set context for cluster
-  set-context:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: set context
-          command: | 
-            aws eks --region us-east-1 update-kubeconfig --name prod 
+ # set-context:
+#    docker:
+#      - image: amazon/aws-cli
+#    steps:
+#      - checkout
+#      - run:
+#          name: set context
+#          command: | 
+#            aws eks --region us-east-1 update-kubeconfig --name prod 
           
 # run docker    
-  run-docker:
-    machine: true
-    steps:
-      - checkout
-      - run: |
-          cd nginx
-          docker build --tag=simpleubuntu . 
-          docker run --detach --publish=5001:80\
-          --name=simpleubuntu simpleubuntu
+#  run-docker:
+#    machine: true
+#    steps:
+#      - checkout
+#      - run: |
+#          echo "building..."
+#          docker build --tag=helloworldapp .
+#          echo docker image ls
+#          docker image ls
+#          echo "run now.."
+#          docker run -p 5000:5000 helloworldapp
 
-
-#echo "building..."
-#docker build --tag=helloworldapp .
-#echo docker image ls
-#docker image ls
-#echo "run now.."
-#docker run -p 5000:5000 helloworldapp
 
 #build docker image  
   build-docker:
@@ -82,6 +104,86 @@ jobs:
             docker tag capstone:latest 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
             docker push 741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
 
+
+#
+  create-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the cluster
+        type: string
+    steps:
+      - checkout
+      - aws-eks/install-aws-iam-authenticator:
+          release-tag: ''
+      - run:
+          name: Install the eksctl tool
+          command: |
+            if which eksctl > /dev/null; then
+            echo "eksctl is already installed"
+            exit 0
+            fi
+            mkdir -p eksctl_download
+            curl --silent --location --retry 5 "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C eksctl_download
+            chmod +x eksctl_download/eksctl
+            SUDO=""
+            if [ $(id -u) -ne 0 ] && which sudo > /dev/null ; then
+            SUDO="sudo"
+            fi
+            $SUDO mv eksctl_download/eksctl /usr/local/bin/
+            rmdir eksctl_download
+      #
+      - aws-eks/create-cluster:
+          cluster-name: << parameters.cluster-name >>
+          node-type: t2.small
+          node-max: 2
+          ssh-access: false
+          ssh-public-key: ''
+          skip-kubectl-install: false
+          
+  create-deployment:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the cluster
+        type: string
+    steps:
+      - checkout
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+          install-kubectl: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: deployment.yml
+          resource-name: deployment/capstone   
+
+  cluster-test:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the cluster
+        type: string
+    steps:
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+      - run:
+          name: Get deployed cluster details
+          command: |
+            echo "Get nodes"
+            kubectl get nodes
+            echo "Get deployments"
+            kubectl get deployment  
+            echo "Get services"
+            kubectl get services
+            echo "get pods"
+            kubectl get pods
+            echo "describe pods"
+            kubectl describe pods
 
 # run kubernetes
   run-kubernetes:
@@ -153,3 +255,31 @@ workflows:
 #      - build-docker
 #      - run-kubernetes:
 #          requires: [build-docker]
+  deployment:
+    jobs:
+      - lint
+      - build-docker:
+          requires:
+            - lint
+      - create-cluster:
+          cluster-name: capstone
+      - create-deployment:
+          cluster-name: capstone
+          requires:
+            - create-cluster
+      - aws-eks/update-container-image:
+          cluster-name: capstone
+          requires:
+            - create-deployment
+          container-image-updates: capstone=741506559500.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
+          post-steps:
+              - kubernetes/delete-resource:
+                  resource-types: deployment
+                  resource-names: capstone
+                  wait: true
+          record: true
+          resource-name: deployment/capstone
+      - cluster-test:
+          cluster-name: apstone
+          requires:
+            - aws-eks/update-container-image
