@@ -37,7 +37,9 @@ Screenshots - Folder with screenshots for assignment review
 
 # Dependencies:
 This project relies on being run in circleci since it makes use of the convenient orbs:
+
   aws-eks: circleci/aws-eks@2.2.0
+  
   kubernetes: circleci/kubernetes@1.3.0
 
 For more information on the functionalities please see:
