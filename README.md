@@ -44,3 +44,5 @@ For more information on the functionalities please see:
 https://circleci.com/developer/orbs/orb/circleci/aws-eks
 https://circleci.com/developer/orbs/orb/circleci/kubernetes
 
+CircleCI and deployment.yml reference the authors aws ecr to store dockerfiles. 
+These references need to be changed to your ecr.

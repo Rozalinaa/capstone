@@ -152,7 +152,3 @@ workflows:
           cluster-name: capstone
           requires:
           - aws-eks/update-container-image
-      - aws-eks/delete-cluster:
-          cluster-name: capstone
-          requires:
-            - cluster-test
